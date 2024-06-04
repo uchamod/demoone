@@ -1,4 +1,4 @@
-import 'package:demo/screens/auth/login.dart';
+import 'package:demo/services/authservices.dart';
 import 'package:demo/util/constant.dart';
 import 'package:demo/widgets/formfield.dart';
 import 'package:demo/widgets/sheardbutton.dart';
@@ -6,13 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Register extends StatefulWidget {
-  const Register({super.key});
+  final Function pageSwift;
+  const Register({super.key, required this.pageSwift});
 
   @override
   State<Register> createState() => _RegisterState();
 }
 
 class _RegisterState extends State<Register> {
+  //create a object for authservicse
+  final AuthServices _auth = AuthServices();
   //form key
   final _formkey = GlobalKey<FormState>();
   //textcontrollers
@@ -20,6 +23,8 @@ class _RegisterState extends State<Register> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  bool _isvisible = true;
+  bool _isvisibleCorrect = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,10 +93,20 @@ class _RegisterState extends State<Register> {
                     ),
                     UserDataFormFeild(
                       controller: _passwordController,
-                      showText: true,
+                      showText: _isvisible,
                       isValid: _validatePassword,
                       inputType: TextInputType.emailAddress,
                       inputAction: TextInputAction.next,
+                      sufficxWidget: InkWell(
+                        onTap: () {
+                          setState(() {
+                            isPasswordShow();
+                          });
+                        },
+                        child: _isvisible
+                            ? const Icon(Icons.visibility_off)
+                            : const Icon(Icons.visibility),
+                      ),
                     ),
                     const SizedBox(
                       height: 12,
@@ -108,15 +123,28 @@ class _RegisterState extends State<Register> {
                     ),
                     UserDataFormFeild(
                       controller: _confirmPasswordController,
-                      showText: true,
+                      showText: _isvisibleCorrect,
                       isValid: _validatePassword,
                       inputType: TextInputType.emailAddress,
-                      inputAction: TextInputAction.next,
+                      inputAction: TextInputAction.done,
+                      sufficxWidget: InkWell(
+                        onTap: () {
+                          setState(() {
+                            isConformPasswordShow();
+                          });
+                        },
+                        child: _isvisibleCorrect
+                            ? const Icon(Icons.visibility_off)
+                            : const Icon(Icons.visibility),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
                     ),
                     Column(
-                      // crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
+                        //text link part
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -127,15 +155,13 @@ class _RegisterState extends State<Register> {
                                   fontWeight: FontWeight.w600,
                                   fontSize: 12),
                             ),
-                            TextButton(
-                              //go to the sing in page
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const SignIn(),
-                                  ),
-                                );
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            //go to register page
+                            GestureDetector(
+                              onTap: () {
+                                widget.pageSwift();
                               },
                               child: Text(
                                 "Sing In",
@@ -150,10 +176,31 @@ class _RegisterState extends State<Register> {
                       ],
                     ),
                     const SizedBox(
-                      height: 90,
+                      height: 100,
                     ),
+                    //register button
                     GestureDetector(
-                        onTap: () {},
+                        onTap: () async {
+                          if (_formkey.currentState!.validate()) {
+                            dynamic result =
+                                await _auth.registerUsingEmailandPassword(
+                                    _emailController.text,
+                                    _passwordController.text);
+                            if (result == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("something went wrong"),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("data is saved"),
+                                ),
+                              );
+                            }
+                          }
+                        },
                         child: const coustomButton(title: "REGISTER")),
                     const SizedBox(
                       height: 50,
@@ -206,5 +253,14 @@ class _RegisterState extends State<Register> {
     }
 
     return null;
+  }
+
+  //controll the visibility of password
+  void isPasswordShow() {
+    _isvisible = !_isvisible;
+  }
+
+  void isConformPasswordShow() {
+    _isvisibleCorrect = !_isvisibleCorrect;
   }
 }

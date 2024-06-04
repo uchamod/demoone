@@ -1,4 +1,3 @@
-import 'package:demo/screens/auth/register.dart';
 import 'package:demo/services/authservices.dart';
 import 'package:demo/util/constant.dart';
 import 'package:demo/widgets/formfield.dart';
@@ -7,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignIn extends StatefulWidget {
-  const SignIn({super.key});
+  final Function pageSwift;
+  const SignIn({super.key, required this.pageSwift});
 
   @override
   State<SignIn> createState() => _SignInState();
@@ -96,13 +96,16 @@ class _SignInState extends State<SignIn> {
                     ),
                     UserDataFormFeild(
                       controller: _passwordController,
-                      showText: true,
+                      showText: false,
                       isValid: _validatePassword,
                       inputType: TextInputType.emailAddress,
-                      inputAction: TextInputAction.next,
+                      inputAction: TextInputAction.done,
                     ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    //text and icon link part
                     Column(
-                      // crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Row(
@@ -115,15 +118,13 @@ class _SignInState extends State<SignIn> {
                                   fontWeight: FontWeight.w600,
                                   fontSize: 12),
                             ),
-                            TextButton(
-                              //go to the register page
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const Register(),
-                                  ),
-                                );
+                            const SizedBox(
+                              width: 3,
+                            ),
+                            //go to the register page
+                            GestureDetector(
+                              onTap: () {
+                                widget.pageSwift();
                               },
                               child: Text(
                                 "Register now",
@@ -134,6 +135,9 @@ class _SignInState extends State<SignIn> {
                               ),
                             )
                           ],
+                        ),
+                        const SizedBox(
+                          height: 5,
                         ),
                         Text(
                           "OR",
@@ -168,16 +172,45 @@ class _SignInState extends State<SignIn> {
                       ],
                     ),
                     const SizedBox(
-                      height: 90,
+                      height: 100,
                     ),
                     GestureDetector(
-                        onTap: () {},
+                        onTap: () async {
+                          if (_formkey.currentState!.validate()) {
+                            dynamic result =
+                                await _auth.singinUsingEmailandPassword(
+                                    _emailController.text,
+                                    _passwordController.text);
+                            if (result == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Invalid email or password"),
+                                ),
+                              );
+                            }
+                          }
+                        },
                         child: const coustomButton(title: "SING IN")),
                     const SizedBox(
                       height: 20,
                     ),
                     GestureDetector(
-                        onTap: () {},
+                        onTap: () async {
+                          dynamic result = await _auth.singInAnonymously();
+                          if (result == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("can't accsept as a guest"),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("accsept as a guest"),
+                              ),
+                            );
+                          }
+                        },
                         child: const coustomButton(title: "Log in as Guest")),
                   ],
                 ),

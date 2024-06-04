@@ -6,14 +6,16 @@ class UserDataFormFeild extends StatefulWidget {
   final inputType;
   final inputAction;
   final bool showText;
+  dynamic sufficxWidget;
   final String? Function(String?) isValid;
-  const UserDataFormFeild(
+  UserDataFormFeild(
       {super.key,
       required this.controller,
       required this.inputType,
       required this.inputAction,
       required this.showText,
-      required this.isValid});
+      required this.isValid,
+      this.sufficxWidget});
 
   @override
   State<UserDataFormFeild> createState() => _UserDataFormFeildState();
@@ -30,6 +32,7 @@ class _UserDataFormFeildState extends State<UserDataFormFeild> {
       validator: widget.isValid,
       cursorColor: kcmainWhite,
       decoration: InputDecoration(
+        suffixIcon: widget.sufficxWidget,
         focusColor: kcmainWhite,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
