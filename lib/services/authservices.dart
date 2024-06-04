@@ -29,6 +29,12 @@ class AuthServices {
   }
 
   //register using email and password
+  Future registerUsingEmailandPassword(String email, String password) async {
+    try {} catch (err) {
+      print(err.toString());
+      return null;
+    }
+  }
   //sing in using using email and password
   //sing in using gmail
 

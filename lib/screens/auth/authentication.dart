@@ -1,4 +1,4 @@
-import 'package:demo/screens/auth/login.dart';
+import 'package:demo/screens/auth/register.dart';
 import 'package:flutter/material.dart';
 
 class Authenticate extends StatefulWidget {
@@ -11,6 +11,6 @@ class Authenticate extends StatefulWidget {
 class _AuthenticateState extends State<Authenticate> {
   @override
   Widget build(BuildContext context) {
-    return const SignIn();
+    return const Register();
   }
 }
