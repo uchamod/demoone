@@ -1,4 +1,5 @@
 import 'package:demo/services/authservices.dart';
+import 'package:demo/services/googlesing.dart';
 import 'package:demo/util/constant.dart';
 import 'package:demo/widgets/formfield.dart';
 import 'package:demo/widgets/sheardbutton.dart';
@@ -161,7 +162,10 @@ class _SignInState extends State<SignIn> {
                             ),
                             //sing in via google
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () async {
+                                await GoogleSing()
+                                    .authenticateWithGoogle(context: context);
+                              },
                               child: Image.asset(
                                 "assets/icons8-google-48.png",
                                 width: 30,
